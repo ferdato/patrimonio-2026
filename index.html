@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patrimonio en Genially</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Para cargar grupos y trabajos, bajá hasta la lista GRUPOS dentro de <script>. */
+
+/* Layout: portada con una tarjeta por grupo; cada grupo abre su galería de fichas */
+:root {
+  --piedra: #eceef0;        /* fondo: granito claro */
+  --papel: #ffffff;         /* fichas */
+  --tinta: #17202b;         /* texto principal */
+  --tinta-suave: #56606c;   /* texto secundario */
+  --azul: #1f4e8c;          /* azul de los nomencladores de Montevideo */
+  --ocre: #c98a1b;          /* acento: bronce de las placas */
+  --linea: #d3d8de;
+  --sombra: 0 1px 2px rgba(23,32,43,.06), 0 8px 24px rgba(23,32,43,.08);
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-texto: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --piedra: #12161c; --papel: #1b212a; --tinta: #e8ebef; --tinta-suave: #a2abb6;
+    --azul: #7fa8e0; --ocre: #e2a93f; --linea: #2c343f;
+    --sombra: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --piedra: #12161c; --papel: #1b212a; --tinta: #e8ebef; --tinta-suave: #a2abb6;
+  --azul: #7fa8e0; --ocre: #e2a93f; --linea: #2c343f;
+  --sombra: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--piedra);
+  color: var(--tinta);
+  font-family: var(--f-texto);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.envoltura { max-width: 1180px; margin: 0 auto; padding-inline: 20px; }
+a { color: var(--azul); }
+
+/* ---------- Encabezado ---------- */
+header { padding-block: 44px 28px; }
+.volver {
+  display: inline-flex; align-items: center; gap: 6px; margin-bottom: 18px;
+  font-weight: 700; font-size: .92rem; text-decoration: none; color: var(--azul);
+}
+.volver:hover { text-decoration: underline; }
+.cartel {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--azul); color: var(--papel);
+  font-family: var(--f-display); font-weight: 700;
+  font-size: .8rem; letter-spacing: .12em; text-transform: uppercase;
+  padding: 6px 12px; border-radius: 4px;
+}
+.cartel::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ocre); }
+h1 {
+  font-family: var(--f-display); font-weight: 800;
+  font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.02;
+  letter-spacing: -.02em; margin: 18px 0 12px; text-wrap: balance;
+}
+h1 span { color: var(--azul); }
+.bajada { max-width: 62ch; color: var(--tinta-suave); font-size: 1.08rem; margin: 0; }
+
+/* ---------- Portada: tarjetas de grupo ---------- */
+.grupos {
+  display: grid; gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  padding-block: 8px 56px;
+}
+.grupo {
+  display: flex; flex-direction: column; text-decoration: none; color: inherit;
+  background: var(--papel); border: 1px solid var(--linea); border-radius: 10px;
+  overflow: hidden; box-shadow: var(--sombra);
+  transition: transform .18s ease;
+}
+.grupo:hover { transform: translateY(-3px); }
+.mosaico {
+  display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px;
+  aspect-ratio: 16 / 9; max-width: 100%; background: var(--linea);
+}
+.mosaico.uno { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.mosaico .celda { position: relative; overflow: hidden; }
+.grupo-datos { display: flex; align-items: end; justify-content: space-between; gap: 12px; padding: 16px 18px 18px; }
+.grupo-datos > div { min-width: 0; }
+.grupo-nombre { font-family: var(--f-display); font-weight: 800; font-size: 1.6rem; line-height: 1.1; margin: 0; overflow-wrap: anywhere; }
+.grupo-desc { margin: 4px 0 0; color: var(--tinta-suave); font-size: .95rem; }
+.grupo-cant {
+  flex: none; font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ocre); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* ---------- Herramientas ---------- */
+.herramientas {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  padding-block: 18px; border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea);
+  margin-bottom: 28px;
+}
+.buscar { flex: 1 1 260px; min-width: 0; position: relative; }
+.buscar input {
+  width: 100%; font: inherit; color: var(--tinta);
+  background: var(--papel); border: 1px solid var(--linea); border-radius: 8px;
+  padding: 10px 14px 10px 38px;
+}
+.buscar svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: var(--tinta-suave); fill: none; }
+.buscar input:focus-visible, .chip:focus-visible, .ficha:focus-visible, .btn:focus-visible, .grupo:focus-visible, .volver:focus-visible {
+  outline: 3px solid var(--ocre); outline-offset: 2px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: inherit; font-size: .88rem; cursor: pointer;
+  background: transparent; color: var(--tinta-suave);
+  border: 1px solid var(--linea); border-radius: 999px; padding: 6px 12px;
+}
+.chip[aria-pressed="true"] { background: var(--tinta); color: var(--piedra); border-color: var(--tinta); }
+.contador { font-size: .9rem; color: var(--tinta-suave); font-variant-numeric: tabular-nums; margin-left: auto; }
+
+/* ---------- Galería de un grupo ---------- */
+.grilla {
+  display: grid; gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  padding-bottom: 56px;
+}
+.ficha {
+  display: flex; flex-direction: column; text-align: left;
+  background: var(--papel); color: inherit; font: inherit;
+  border: 1px solid var(--linea); border-radius: 10px; overflow: hidden;
+  padding: 0; cursor: pointer; box-shadow: var(--sombra);
+  transition: transform .18s ease;
+}
+.ficha:hover { transform: translateY(-3px); }
+.miniatura { position: relative; aspect-ratio: 16 / 9; max-width: 100%; overflow: hidden; }
+.miniatura, .mosaico .celda {
+  background: linear-gradient(135deg, var(--azul), color-mix(in srgb, var(--azul) 55%, var(--tinta)));
+}
+.miniatura img, .celda img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.respaldo {
+  position: absolute; inset: 0; display: grid; place-items: center; padding: 12px;
+  color: #fff; font-family: var(--f-display); font-weight: 700; font-size: 1.2rem; text-align: center; line-height: 1.2;
+}
+.mosaico:not(.uno) .celda .respaldo { font-size: .85rem; }
+.ver {
+  position: absolute; right: 10px; bottom: 10px;
+  background: rgba(15,20,28,.78); color: #fff; font-size: .8rem; font-weight: 700;
+  padding: 5px 10px; border-radius: 6px; opacity: 0; transition: opacity .18s ease;
+}
+.ficha:hover .ver, .ficha:focus-visible .ver { opacity: 1; }
+.datos { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; min-width: 0; }
+.numero {
+  font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ocre); font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.lugar { font-family: var(--f-display); font-weight: 700; font-size: 1.22rem; line-height: 1.2; margin: 0; overflow-wrap: anywhere; }
+.meta { font-size: .92rem; color: var(--tinta-suave); margin: 0; overflow-wrap: anywhere; }
+.vacio { grid-column: 1 / -1; text-align: center; color: var(--tinta-suave); padding: 48px 16px; }
+
+footer { border-top: 1px solid var(--linea); padding-block: 20px 36px; color: var(--tinta-suave); font-size: .88rem; }
+
+/* ---------- Visor ---------- */
+dialog {
+  width: min(1100px, calc(100vw - 32px)); max-width: 100%;
+  border: 0; border-radius: 12px; padding: 0;
+  background: var(--papel); color: var(--tinta); box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+dialog::backdrop { background: rgba(10,14,20,.72); }
+.visor-cabecera {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--linea);
+}
+.visor-cabecera > div:first-child { min-width: 0; }
+.visor-cabecera h2 { font-family: var(--f-display); font-size: 1.15rem; margin: 0; overflow-wrap: anywhere; }
+.visor-cabecera p { margin: 0; font-size: .88rem; color: var(--tinta-suave); }
+.acciones { display: flex; gap: 8px; }
+.btn {
+  font: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; text-decoration: none;
+  border-radius: 8px; padding: 8px 12px; border: 1px solid var(--linea);
+  background: transparent; color: var(--tinta);
+}
+.btn.primario { background: var(--azul); border-color: var(--azul); color: var(--papel); }
+.marco { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: var(--piedra); }
+.marco iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ficha, .grupo, .ver { transition: none; }
+  .ficha:hover, .grupo:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== PORTADA ===================== -->
+<div id="vista-portada">
+  <header class="envoltura">
+    <span class="cartel">Día del Patrimonio · Montevideo</span>
+    <h1>Patrimonio en <span>Genially</span></h1>
+    <p class="bajada">Cada estudiante investigó un sitio patrimonial de Montevideo y lo presentó en Genially. Elegí un grupo para ver sus trabajos.</p>
+  </header>
+  <main class="envoltura">
+    <section class="grupos" id="grupos"></section>
+  </main>
+</div>
+
+<!-- ===================== GALERÍA DE UN GRUPO ===================== -->
+<div id="vista-grupo" hidden>
+  <header class="envoltura">
+    <a class="volver" href="#">← Todos los grupos</a><br>
+    <span class="cartel">Día del Patrimonio · Montevideo</span>
+    <h1 id="grupo-titulo"></h1>
+    <p class="bajada" id="grupo-bajada"></p>
+  </header>
+  <main class="envoltura">
+    <div class="herramientas">
+      <label class="buscar" for="buscador">
+        <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="buscador" type="search" placeholder="Buscar por lugar, barrio o integrante" autocomplete="off">
+      </label>
+      <div class="chips" id="chips" aria-label="Filtrar por barrio"></div>
+      <span class="contador" id="contador"></span>
+    </div>
+    <section class="grilla" id="grilla" aria-live="polite"></section>
+  </main>
+</div>
+
+<footer class="envoltura">
+  Trabajos realizados por estudiantes con motivo del Día del Patrimonio.
+</footer>
+
+<dialog id="visor" aria-labelledby="visor-titulo">
+  <div class="visor-cabecera">
+    <div>
+      <h2 id="visor-titulo"></h2>
+      <p id="visor-meta"></p>
+    </div>
+    <div class="acciones">
+      <a class="btn primario" id="visor-abrir" href="#" target="_blank" rel="noopener">Abrir en pestaña nueva</a>
+      <button class="btn" id="visor-cerrar" type="button">Cerrar</button>
+    </div>
+  </div>
+  <div class="marco"><iframe id="visor-iframe" title="Presentación de Genially" allowfullscreen allow="fullscreen"></iframe></div>
+</dialog>
+
+<script>
+/* =====================================================================
+   GRUPOS Y TRABAJOS — editá solo esta parte
+
+   Cada grupo tiene:
+     - nombre:      cómo se muestra (por ejemplo "4.º 2")
+     - descripcion: opcional (turno, liceo, asignatura...)
+     - trabajos:    la lista de presentaciones de ese grupo
+
+   Cada trabajo tiene:
+     - lugar:       nombre del sitio patrimonial (si queda vacío, la ficha
+                    muestra a los integrantes como título)
+     - barrio:      barrio de Montevideo (opcional, sirve para filtrar)
+     - integrantes: quiénes hicieron el trabajo
+     - enlace:      link de Genially (obligatorio)
+     - miniatura:   opcional; solo si la vista previa automática no aparece
+   ===================================================================== */
+const GRUPOS = [
+  { nombre: "1° MA", descripcion: "", trabajos: [] },
+  {
+    nombre: "1° MB",
+    descripcion: "",
+    trabajos: [
+      { lugar: "", barrio: "", integrantes: "Larrosa, Cruz, Olivera",
+        enlace: "https://view.genially.com/6ac6452cb5d0ac0b9b1d98d1" },
+      { lugar: "", barrio: "", integrantes: "Diaz, Dutra, Nuñez",
+        enlace: "https://view.genially.com/6aaa9baf573545d91a2db408" },
+      { lugar: "", barrio: "", integrantes: "Guianatassio, Paola Irigoyen, Guadalupe Perez",
+        enlace: "https://view.genially.com/6ac64ac1f52adbdf5009686d",
+        miniatura: "https://genially-thumbnails.genially.com/5fd8abd9ea42195c7cbaee01.png" },
+      { lugar: "", barrio: "", integrantes: "Catalina Alvarez, Macarena Gonzalez, Iohan Gomez",
+        enlace: "https://view.genially.com/6aaa9cef974f5a21691a2bff" },
+      { lugar: "", barrio: "", integrantes: "Selva, Lopez",
+        enlace: "https://view.genially.com/6aaaa0d6a544b9c0cc372a55" },
+      { lugar: "", barrio: "", integrantes: "Lautaro Rodriguez, Renato Saldivia, Facundo Gonzalez, Alex Hornos",
+        enlace: "https://view.genially.com/6aaa9891e28238e69c3997d6" },
+      { lugar: "", barrio: "", integrantes: "Oriana Ximeno, Martina Techera, Erika Cardozo",
+        enlace: "https://view.genially.com/6a8ef0acdd3a23157b7d7da3" },
+    ]
+  },
+  { nombre: "1° MD", descripcion: "", trabajos: [] },
+  { nombre: "1° ME", descripcion: "", trabajos: [] },
+];
+/* ===================================================================== */
+
+function idGenially(enlace) {
+  const m = String(enlace || "").match(/genial\.?ly\.com\/(?:[^/]+\/)*([a-f0-9]{24})/i);
+  return m ? m[1] : null;
+}
+function normalizar(t) {
+  return String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+function slug(t) {
+  return normalizar(t).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "grupo";
+}
+function miniaturaUrl(id) { return "https://genially-thumbnails.genially.com/" + id + ".png"; }
+
+/* Preparar datos */
+const usados = new Set();
+const grupos = GRUPOS.filter(g => g && g.nombre).map(g => {
+  let s = slug(g.nombre), base = s, k = 2;
+  while (usados.has(s)) s = base + "-" + k++;
+  usados.add(s);
+  const trabajos = (g.trabajos || []).filter(t => t && t.enlace)
+    .map((t, i) => {
+      const lugar = (t.lugar || "").trim();
+      const integrantes = (t.integrantes || t.estudiante || "").trim();
+      return {
+        ...t, n: i + 1, id: idGenially(t.enlace),
+        titulo: lugar || integrantes || "Trabajo " + (i + 1),
+        detalle: [t.barrio, lugar ? integrantes : ""].filter(Boolean).join(" · "),
+        textoBusqueda: [lugar, t.barrio, integrantes].join(" ")
+      };
+    });
+  return { ...g, slug: s, trabajos };
+});
+
+/* Imagen con respaldo: si la miniatura no carga, queda el nombre del lugar */
+function imagenConRespaldo(contenedor, t) {
+  const respaldo = document.createElement("div");
+  respaldo.className = "respaldo"; respaldo.textContent = t.titulo;
+  contenedor.appendChild(respaldo);
+  const src = t.miniatura || (t.id ? miniaturaUrl(t.id) : "");
+  if (!src) return;
+  const img = document.createElement("img");
+  img.loading = "lazy"; img.alt = "Vista previa de la presentación: " + t.titulo;
+  img.src = src;
+  img.addEventListener("load", () => respaldo.hidden = true);
+  img.addEventListener("error", () => img.remove());
+  contenedor.appendChild(img);
+}
+
+/* ---------- Portada ---------- */
+function dibujarPortada() {
+  const cont = document.getElementById("grupos");
+  cont.replaceChildren();
+  if (!grupos.length) {
+    const v = document.createElement("p");
+    v.className = "vacio"; v.textContent = "Todavía no hay grupos cargados.";
+    cont.appendChild(v); return;
+  }
+  grupos.forEach(g => {
+    const a = document.createElement("a");
+    a.className = "grupo"; a.href = "#" + g.slug;
+    a.setAttribute("aria-label", "Ver los trabajos de " + g.nombre);
+
+    const mos = document.createElement("div");
+    const muestra = g.trabajos.slice(0, 4);
+    mos.className = "mosaico" + (muestra.length < 4 ? " uno" : "");
+    (muestra.length >= 4 ? muestra : muestra.slice(0, 1)).forEach(t => {
+      const c = document.createElement("div"); c.className = "celda";
+      imagenConRespaldo(c, t); mos.appendChild(c);
+    });
+    if (!muestra.length) {
+      const c = document.createElement("div"); c.className = "celda";
+      const r = document.createElement("div"); r.className = "respaldo"; r.textContent = g.nombre;
+      c.appendChild(r); mos.appendChild(c);
+    }
+
+    const datos = document.createElement("div"); datos.className = "grupo-datos";
+    const izq = document.createElement("div");
+    const h = document.createElement("h2"); h.className = "grupo-nombre"; h.textContent = g.nombre;
+    izq.appendChild(h);
+    if (g.descripcion) {
+      const p = document.createElement("p"); p.className = "grupo-desc"; p.textContent = g.descripcion;
+      izq.appendChild(p);
+    }
+    const cant = document.createElement("span"); cant.className = "grupo-cant";
+    cant.textContent = !g.trabajos.length ? "Próximamente"
+      : g.trabajos.length === 1 ? "1 trabajo" : g.trabajos.length + " trabajos";
+    datos.append(izq, cant);
+
+    a.append(mos, datos);
+    cont.appendChild(a);
+  });
+}
+
+/* ---------- Galería de un grupo ---------- */
+const grilla = document.getElementById("grilla");
+const buscador = document.getElementById("buscador");
+const chips = document.getElementById("chips");
+const contador = document.getElementById("contador");
+let grupoActual = null, barrioActivo = "";
+
+function abrirGrupo(g) {
+  grupoActual = g; barrioActivo = ""; buscador.value = "";
+  document.getElementById("grupo-titulo").textContent = g.nombre;
+  document.getElementById("grupo-bajada").textContent =
+    g.descripcion ? g.descripcion + ". Tocá una ficha para ver la presentación completa."
+                  : "Tocá una ficha para ver la presentación completa.";
+  document.title = g.nombre + " · Patrimonio en Genially";
+  armarChips();
+  dibujarGrilla();
+}
+
+function armarChips() {
+  chips.replaceChildren();
+  const barrios = [...new Set(grupoActual.trabajos.map(t => (t.barrio || "").trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, "es"));
+  chips.hidden = barrios.length < 2;
+  if (chips.hidden) return;
+  ["", ...barrios].forEach(b => {
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "chip";
+    btn.textContent = b || "Todos";
+    btn.setAttribute("aria-pressed", String(b === barrioActivo));
+    btn.addEventListener("click", () => {
+      barrioActivo = b;
+      chips.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === btn)));
+      dibujarGrilla();
+    });
+    chips.appendChild(btn);
+  });
+}
+
+function ficha(t) {
+  const el = document.createElement("button");
+  el.type = "button"; el.className = "ficha";
+  el.setAttribute("aria-label", "Ver presentación: " + t.titulo);
+  const mini = document.createElement("div"); mini.className = "miniatura";
+  imagenConRespaldo(mini, t);
+  const ver = document.createElement("span"); ver.className = "ver"; ver.textContent = "Ver presentación";
+  mini.appendChild(ver);
+
+  const datos = document.createElement("div"); datos.className = "datos";
+  const num = document.createElement("span");
+  num.className = "numero"; num.textContent = "Ficha " + String(t.n).padStart(2, "0");
+  const lugar = document.createElement("h3"); lugar.className = "lugar"; lugar.textContent = t.titulo;
+  datos.append(num, lugar);
+  if (t.detalle) {
+    const meta = document.createElement("p"); meta.className = "meta"; meta.textContent = t.detalle;
+    datos.appendChild(meta);
+  }
+  el.append(mini, datos);
+  el.addEventListener("click", () => abrirVisor(t));
+  return el;
+}
+
+function dibujarGrilla() {
+  const q = normalizar(buscador.value.trim());
+  const lista = grupoActual.trabajos.filter(t =>
+    (!barrioActivo || (t.barrio || "").trim() === barrioActivo) &&
+    (!q || normalizar(t.textoBusqueda).includes(q))
+  );
+  grilla.replaceChildren(...lista.map(ficha));
+  if (!lista.length) {
+    const v = document.createElement("p"); v.className = "vacio";
+    v.textContent = grupoActual.trabajos.length ? "No hay trabajos que coincidan con la búsqueda." : "Este grupo todavía no tiene trabajos cargados.";
+    grilla.appendChild(v);
+  }
+  contador.textContent = lista.length === 1 ? "1 trabajo" : lista.length + " trabajos";
+}
+buscador.addEventListener("input", dibujarGrilla);
+
+/* ---------- Visor ---------- */
+const visor = document.getElementById("visor");
+const iframe = document.getElementById("visor-iframe");
+function abrirVisor(t) {
+  const url = t.id ? "https://view.genially.com/" + t.id : t.enlace;
+  document.getElementById("visor-titulo").textContent = t.titulo;
+  document.getElementById("visor-meta").textContent = t.detalle;
+  document.getElementById("visor-abrir").href = url;
+  iframe.src = url;
+  if (typeof visor.showModal === "function") visor.showModal();
+  else window.open(url, "_blank");
+}
+visor.addEventListener("close", () => { iframe.src = "about:blank"; });
+visor.addEventListener("click", e => { if (e.target === visor) visor.close(); });
+document.getElementById("visor-cerrar").addEventListener("click", () => visor.close());
+
+/* ---------- Navegación: #nombre-del-grupo abre ese grupo ---------- */
+function ruta() {
+  const s = decodeURIComponent(location.hash.slice(1));
+  const g = grupos.find(x => x.slug === s);
+  document.getElementById("vista-portada").hidden = !!g;
+  document.getElementById("vista-grupo").hidden = !g;
+  if (g) abrirGrupo(g);
+  else document.title = "Patrimonio en Genially";
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", ruta);
+dibujarPortada();
+ruta();
+</script>
+</body>
+</html>
